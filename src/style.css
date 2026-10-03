@@ -33,7 +33,45 @@ body { display: flex; background: var(--bg); color: var(--fg); }
   gap: 12px;
   font-size: 14px;
 }
-#map { flex: 1; }
+#map-wrap { flex: 1; position: relative; min-height: 0; }
+#map { position: absolute; inset: 0; }
+
+/* Calculating badge: floats over the map without blocking it. */
+#busy {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000; /* above Leaflet panes and controls */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 120px);
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  pointer-events: none;
+}
+#busy-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spinner {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2.4s; }
+}
+/* Fade the previous result while a new one is calculated. */
+#map.busy .leaflet-overlay-pane { opacity: 0.35; transition: opacity 0.2s; }
 
 h1 { font-size: 20px; margin: 0; }
 .hint, small { color: var(--muted); margin: 0; }

@@ -22,6 +22,9 @@ const ui = {
   showFill: $<HTMLInputElement>('show-fill'),
   compute: $<HTMLButtonElement>('compute'),
   status: $<HTMLElement>('status'),
+  map: $<HTMLElement>('map'),
+  busy: $<HTMLElement>('busy'),
+  busyText: $<HTMLElement>('busy-text'),
   legend: $<HTMLUListElement>('legend'),
   search: $<HTMLFormElement>('search'),
   searchInput: $<HTMLInputElement>('search-input'),
@@ -250,6 +253,13 @@ function setStatus(msg: string, isError = false) {
   ui.status.classList.toggle('error', isError);
 }
 
+/** Show or hide the "Calculating…" badge over the map and fade the old result. */
+function setBusy(on: boolean, msg = 'Calculating…') {
+  ui.busy.hidden = !on;
+  ui.busyText.textContent = msg;
+  ui.map.classList.toggle('busy', on);
+}
+
 async function compute() {
   if (!origin) return setStatus('Click the map to choose a starting point.');
   const provider = currentProvider();
@@ -262,6 +272,7 @@ async function compute() {
   controller?.abort();
   const mine = (controller = new AbortController());
   ui.compute.disabled = true;
+  setBusy(true);
   try {
     const result = await provider.compute({
       origin,
@@ -270,7 +281,10 @@ async function compute() {
       traffic,
       keys,
       signal: mine.signal,
-      onProgress: (m) => setStatus(m),
+      onProgress: (m) => {
+        setStatus(m);
+        if (controller === mine) setBusy(true, m);
+      },
     });
     lastResult = result;
     render(result, true);
@@ -282,7 +296,11 @@ async function compute() {
     if (mine.signal.aborted) return;
     setStatus((err as Error).message, true);
   } finally {
-    if (controller === mine) ui.compute.disabled = false;
+    // A newer calculation that replaced this one keeps the badge up.
+    if (controller === mine) {
+      ui.compute.disabled = false;
+      setBusy(false);
+    }
   }
 }
 

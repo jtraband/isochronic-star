@@ -69,7 +69,13 @@
       <p id="status" role="status"></p>
       <ul id="legend"></ul>
     </aside>
-    <div id="map"></div>
+    <main id="map-wrap">
+      <div id="map"></div>
+      <div id="busy" role="status" aria-live="polite" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span id="busy-text">Calculating…</span>
+      </div>
+    </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
