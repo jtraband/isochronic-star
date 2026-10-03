@@ -54,9 +54,9 @@ let controller: AbortController | null = null;
 let departIsNow = true;
 
 // ---- Controls ----
-// A typed key wins over one from .env.local.
+// A typed key wins over one from .env.local; clearing the field falls back to it.
 const keyStoreName = (p: Provider, f: KeyField) => `key.${p.id}.${f.name}`;
-const getKey = (p: Provider, f: KeyField) => (store.get(keyStoreName(p, f)) ?? f.envDefault ?? '').trim();
+const getKey = (p: Provider, f: KeyField) => (store.get(keyStoreName(p, f)) || f.envDefault || '').trim();
 const hasKeys = (p: Provider) => p.keys.every((f) => getKey(p, f));
 
 for (const p of providers) ui.provider.add(new Option(p.label, p.id));
