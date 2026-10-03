@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Isochronic Star</title>
+  </head>
+  <body>
+    <aside id="panel">
+      <h1>Isochronic Star</h1>
+      <p class="hint">Everywhere you can drive to in the same amount of time. Click the map to set a starting point.</p>
+
+      <form id="search">
+        <input id="search-input" type="search" placeholder="Search for a place…" />
+        <button type="submit">Go</button>
+        <button type="button" id="locate" title="Use my location">◎</button>
+      </form>
+
+      <label>Routing engine
+        <select id="provider"></select>
+      </label>
+
+      <div id="keys" class="stack"></div>
+
+      <fieldset id="traffic-row">
+        <label class="inline" id="traffic-toggle"><input id="traffic" type="checkbox" checked /> Include traffic</label>
+        <label>Departure (local time at start)
+          <span class="row">
+            <input id="depart" type="datetime-local" />
+            <button type="button" id="depart-now">Now</button>
+          </span>
+        </label>
+        <small id="traffic-note"></small>
+      </fieldset>
+
+      <fieldset>
+        <div class="row">
+          <label>Longest time
+            <select id="max-time">
+              <option value="15">15 min</option>
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60" selected>1 hour</option>
+              <option value="90">1.5 hours</option>
+              <option value="120">2 hours</option>
+            </select>
+          </label>
+          <label>Rings
+            <select id="rings">
+              <option>1</option>
+              <option>2</option>
+              <option selected>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select>
+          </label>
+        </div>
+        <small id="budgets-preview"></small>
+        <small id="limit-note" hidden></small>
+      </fieldset>
+
+      <fieldset>
+        <label class="inline"><input id="show-rays" type="checkbox" checked /> Show star rays</label>
+        <label class="inline"><input id="show-fill" type="checkbox" checked /> Fill areas</label>
+      </fieldset>
+
+      <button id="compute" type="button">Compute</button>
+      <p id="status" role="status"></p>
+      <ul id="legend"></ul>
+    </aside>
+    <div id="map"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

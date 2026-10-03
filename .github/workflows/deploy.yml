@@ -1,0 +1,50 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Keys come from repository secrets (Settings > Secrets and variables > Actions).
+      # Vite bakes them into the public JavaScript, so restrict them by domain where the
+      # provider allows it. Missing secrets just leave that engine asking for a key.
+      - run: npm run build
+        env:
+          VITE_TOMTOM_KEY: ${{ secrets.VITE_TOMTOM_KEY }}
+          VITE_HERE_KEY: ${{ secrets.VITE_HERE_KEY }}
+          VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
+          VITE_TRAVELTIME_APP_ID: ${{ secrets.VITE_TRAVELTIME_APP_ID }}
+          VITE_TRAVELTIME_KEY: ${{ secrets.VITE_TRAVELTIME_KEY }}
+          VITE_ORS_KEY: ${{ secrets.VITE_ORS_KEY }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
