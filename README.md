@@ -52,8 +52,9 @@ that browser. A key typed into the sidebar overrides the one in `.env.local`.
 
 ## Using the app
 
-- **Routing engine:** which service calculates the areas. On first load the app picks
-  the first engine you have a key for; after that it remembers your choice.
+- **Routing engine:** which service calculates the areas. On first load the app uses
+  openrouteservice if it has a key (otherwise the first engine with a key, or OSRM);
+  after that it remembers your choice.
 - **Departure:** starts at "now" and keeps up with the clock, which means live traffic
   (where the engine has it). Pick another date and time to see typical traffic for then;
   **Now** switches back.

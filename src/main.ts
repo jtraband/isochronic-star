@@ -60,8 +60,15 @@ const getKey = (p: Provider, f: KeyField) => (store.get(keyStoreName(p, f)) || f
 const hasKeys = (p: Provider) => p.keys.every((f) => getKey(p, f));
 
 for (const p of providers) ui.provider.add(new Option(p.label, p.id));
+// First visit: openrouteservice if it has a key (fast, and its 1-hour limit matches the
+// default time), else the first engine with keys, else keyless OSRM.
+const DEFAULT_PROVIDER = 'ors';
+const usable = (id: string) => providers.find((p) => p.id === id && hasKeys(p))?.id;
 ui.provider.value =
-  store.get('provider') ?? providers.find((p) => p.keys.length && hasKeys(p))?.id ?? 'osrm';
+  store.get('provider') ??
+  usable(DEFAULT_PROVIDER) ??
+  providers.find((p) => p.keys.length && hasKeys(p))?.id ??
+  'osrm';
 if (!ui.provider.value) ui.provider.value = 'osrm';
 
 // The user's chosen time and rings. An engine with lower limits shows less, but switching
